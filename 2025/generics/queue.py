@@ -113,7 +113,7 @@ while (val := generic_q.dequeue()) is not None:
 # T: (float, int) != T: float | int.
 class NumericQueue[T: (float, int)](Queue[T]):
     @property
-    def total(self) -> float:
+    def total(self) -> T:
         current_sum = 0
         node = self.head
 
