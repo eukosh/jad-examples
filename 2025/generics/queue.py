@@ -1,5 +1,43 @@
 # ruff: noqa: T201 ERA001 INP001
 
+# Ensure type checking is enabled in your IDE
+
+# add example showing difference between Generic func and func with union
+
+from typing import Sequence, TypeVar, reveal_type
+
+T = TypeVar("T")
+
+
+# Generic func #1
+def first(seq: Sequence[T]) -> T:
+    return seq[0]
+
+
+reveal_type(first([1, 2, 3]))
+reveal_type(
+    first(
+        (
+            "a",
+            "b",
+        )
+    )
+)
+
+
+# Generic func #2
+# def add_broken(a: int | str, b: int | str) -> int | str:
+#     return a + b
+
+
+def add[T: (int, str)](a: T, b: T) -> T:
+    return a + b
+
+
+add(1, 2)  # works
+add("a", "b")  # works
+# add(1, "a")  # fails, because T is bound to int | str
+
 
 class Node[T]:
     def __init__(self, data: T) -> None:
@@ -50,19 +88,6 @@ class Queue[T]:
         return res
 
 
-class NumericQueue[T: float | int](Queue[T]):
-    @property
-    def total(self) -> float:
-        total = 0
-        node = self.head
-
-        while node:
-            total += node.data
-            node = node.next
-
-        return total
-
-
 # ---
 generic_q = Queue[int]()
 
@@ -76,18 +101,44 @@ print("Generic int queue")
 while (val := generic_q.dequeue()) is not None:
     print(val)
 
+
 # ---
+# Before 3.12
+
+# from typing import Generic, TypeVar
+# T = TypeVar("T", bound=(float | int))
+# class NumericQueue(Generic[T], Queue[T]):
+
+
+# T: (float, int) != T: float | int.
+class NumericQueue[T: (float, int)](Queue[T]):
+    @property
+    def total(self) -> float:
+        current_sum = 0
+        node = self.head
+
+        while node:
+            current_sum += node.data
+            node = node.next
+
+        return current_sum
+
+
 numeric_q = NumericQueue[int]()
 
 numeric_q.enqueue(2.3)  # highlighted with as type violation
 numeric_q.enqueue(2)
 print(f"\nNumeric int queue: {numeric_q.to_list()} | Total: {numeric_q.total}")
 
+
 # ---
-numeric_q = NumericQueue[float]()
+class MyFloat(float): ...
+
+
+numeric_q = NumericQueue[MyFloat]()
 
 numeric_q.enqueue(2.3)
-# the line below is not a type violation, because int is a covariance of float (subtype)
+# the line below is not a type violation, because int in Python typing is a covariance of float
 numeric_q.enqueue(2)
 print(f"\nNumeric float queue: {numeric_q.to_list()} | Total: {numeric_q.total}")
 
@@ -96,3 +147,13 @@ numeric_q = NumericQueue[str]()
 numeric_q.enqueue("abc")  # doesn't fail, interpreter doesn't care about types
 print(f"\nNumeric str queue: {numeric_q.to_list()}")
 # print(f"Numeric str total: {numeric_q.total}") # fails because we have a string in queue
+
+
+# --- Legacy vs Modern TypeAlias syntax Python 3.12+
+# from typing import TypeAlias
+
+# _T = TypeVar("_T")
+
+# ListOrSet: TypeAlias = list[_T] | set[_T]
+
+# type ListOrSetNew[T] = list[T] | set[T]
