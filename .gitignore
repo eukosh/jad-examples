@@ -10,8 +10,10 @@ configs/runs
 venv
 .env
 */.venv/*
+*/dbt_packages/*
 .idea
 .pytest_cache
 *.egg-info
 build
 dist
+**/.user.yml
