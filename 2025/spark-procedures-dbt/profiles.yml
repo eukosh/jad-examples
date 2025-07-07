@@ -2,7 +2,7 @@ core:
   outputs:
     dev:
       type: bigquery
-      project: your-gcp-project-id
+      project: spark-procedure-458406
       dataset: spark_procedure_demo
       job_execution_timeout_seconds: 300
       job_retries: 0

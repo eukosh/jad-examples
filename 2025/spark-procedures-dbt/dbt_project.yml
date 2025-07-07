@@ -40,4 +40,4 @@ vars:
   spark_sa_prefix: 'spark-procedure-demo'
   spark_connection: 'my-spark-connection'
   spark_dataset: 'spark_procedure_demo'
-  spark_gcs_bucket: 'spark-procedure-demo'
+  spark_gcs_bucket: 'spark-procedure-demo1'

@@ -25,11 +25,9 @@ word_count.printSchema()
 word_count.write \
 .format("bigquery") \
 .option("writeMethod", "direct") \
-.save("{{var("spark_dataset")}}.wordcount_output", mode="overwrite")
+.save("{{var("spark_dataset")}}.wordcount_output_dbt", mode="overwrite")
 print("Wrote to BigQuery")
 
-
-# UPD: spark-procedure-demo is the name of the GCS bucket, update it if needed
 word_count.coalesce(1).write.csv("gs://{{var("spark_gcs_bucket")}}/wordcount_output_dbt.csv", header=True, mode="overwrite")
 
 print("Wrote to gcs")
