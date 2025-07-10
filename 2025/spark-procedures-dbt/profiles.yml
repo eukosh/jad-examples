@@ -1,0 +1,14 @@
+core:
+  outputs:
+    dev:
+      type: bigquery
+      project: spark-procedure-458406
+      dataset: spark_procedure_demo
+      job_execution_timeout_seconds: 300
+      job_retries: 0
+      location: EU
+      method: oauth
+      priority: interactive
+      threads: 4
+
+  target: dev

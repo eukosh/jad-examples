@@ -1,0 +1,26 @@
+name: bigquery-spark-proc-dbt-run
+
+on:
+  workflow_call:
+
+permissions:
+  contents: "read"
+  id-token: "write"
+
+jobs:
+  build-and-test-dbt:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./spark-procedures-dbt
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: "google-github-actions/auth@v2"
+        with:
+          project_id: "spark-procedure-458406"
+          workload_identity_provider: "projects/693553245097/locations/global/workloadIdentityPools/demo-pool/providers/github"
+          service_account: "spark-procedure-demo@spark-procedure-458406.iam.gserviceaccount.com"
