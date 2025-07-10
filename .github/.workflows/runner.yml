@@ -1,0 +1,8 @@
+name: Trigger Spark Procedures DBT Example
+
+on:
+  workflow_dispatch:
+
+jobs:
+  call-example:
+    uses: ./2025/spark-procedures-dbt/.github/workflows/spark-procedures-dbt.yml
