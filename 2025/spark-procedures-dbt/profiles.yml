@@ -10,6 +10,6 @@ core:
       method: oauth
       priority: interactive
       threads: 4
-      # impersonate_service_account: github-actions@spark-procedure-458406.iam.gserviceaccount.com
+      impersonate_service_account: spark-procedure-demo@spark-procedure-458406.iam.gserviceaccount.com
 
   target: dev

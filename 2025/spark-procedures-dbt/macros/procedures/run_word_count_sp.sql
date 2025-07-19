@@ -3,6 +3,7 @@
 
 {% set sp_sql %}
 CREATE OR REPLACE PROCEDURE {{ proc_name }}()
+EXTERNAL SECURITY INVOKER
 WITH CONNECTION `{{ target.project }}.eu.{{ var("spark_connection") }}`
 OPTIONS(engine="SPARK")
 LANGUAGE PYTHON AS R"""
@@ -36,7 +37,7 @@ print("Wrote to gcs")
 {% do run_query(sp_sql) %}
 
 {% set task_sql %}
--- SET @@spark_proc_properties.service_account='{{ var("spark_sa_prefix") }}@{{ target.project }}.iam.gserviceaccount.com';
+SET @@spark_proc_properties.service_account='{{ var("spark_sa_prefix") }}@{{ target.project }}.iam.gserviceaccount.com';
 SET @@spark_proc_properties.staging_dataset_id='{{ var("spark_dataset") }}';
 
 CALL {{ proc_name }}();
