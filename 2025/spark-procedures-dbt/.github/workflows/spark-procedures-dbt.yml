@@ -1,26 +1,40 @@
-name: bigquery-spark-proc-dbt-run
+name: Example GHA workflow for dbt with Spark Procedure
 
 on:
-  workflow_call:
+  schedule:
+    - cron: "0 4 * * *"
+  workflow_dispatch:
 
 permissions:
   contents: "read"
   id-token: "write"
 
 jobs:
-  build-and-test-dbt:
+  run-spark-procedure:
     runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: ./spark-procedures-dbt
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - uses: "google-github-actions/auth@v2"
+      - name: Authenticate with GCP through Workload Identity Federation + Service Account
+        uses: google-github-actions/auth@v2
         with:
-          project_id: "spark-procedure-458406"
-          workload_identity_provider: "projects/693553245097/locations/global/workloadIdentityPools/demo-pool/providers/github"
-          service_account: "spark-procedure-demo@spark-procedure-458406.iam.gserviceaccount.com"
+          project_id: "spark-procedure"
+          # insert your workload identity pool and provider names
+          workload_identity_provider: "projects/{{project_id}}/locations/global/workloadIdentityPools/{{pool-name}}/providers/{{provider-name}}"
+          service_account: "example@spark-procedure.iam.gserviceaccount.com"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run dbt macro
+        run: |
+          dbt run-operation run_word_count_sp --target dev
